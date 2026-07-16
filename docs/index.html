@@ -51,6 +51,13 @@
     gap: 4px;
   }
 
+  header .left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
   header .brand {
     display: flex;
     align-items: center;
@@ -111,19 +118,10 @@
     margin-bottom: 44px;
   }
 
-  .widget-caption {
-    font-size: 12px;
-    color: var(--fg-dim);
-    letter-spacing: 0.02em;
-    margin-bottom: 24px;
-  }
-
   .tags {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 40px;
   }
 
   .tag {
@@ -138,7 +136,15 @@
 <body>
 
   <header>
-    <div class="brand"><span class="dot"></span> Built on ElevenLabs Agents</div>
+    <div class="left">
+      <div class="brand"><span class="dot"></span> Built on ElevenLabs Agents</div>
+      <div class="tags">
+        <span class="tag">Agentic AI</span>
+        <span class="tag">MCP orchestration</span>
+        <span class="tag">Enterprise integration</span>
+        <span class="tag">Regulated environments</span>
+      </div>
+    </div>
     <div class="contact">
       <span>James Holliss · Solutions Engineer</span>
       <a href="mailto:j.holliss@live.co.uk">j.holliss@live.co.uk</a>
@@ -154,15 +160,6 @@
       his agentic AI platforms, MCP-based integrations, or why he wants to
       join ElevenLabs.
     </p>
-
-    <div class="tags">
-      <span class="tag">Agentic AI</span>
-      <span class="tag">MCP orchestration</span>
-      <span class="tag">Enterprise integration</span>
-      <span class="tag">Regulated environments</span>
-    </div>
-
-    <p class="widget-caption">↓ Voice or text · takes about 30 seconds to load</p>
 
     <elevenlabs-convai
       agent-id="agent_1901kxnyny0debmv2emrrh3d994k"
