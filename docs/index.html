@@ -30,7 +30,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     padding: 32px 24px 24px;
   }
 
@@ -38,11 +37,18 @@
     width: 100%;
     max-width: 960px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     font-size: 13px;
     color: var(--fg-dim);
     letter-spacing: 0.02em;
+  }
+
+  header .contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
   }
 
   header .brand {
@@ -72,15 +78,13 @@
   }
 
   main {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
     max-width: 640px;
     width: 100%;
-    padding: 48px 0;
+    padding: 40px 0 0;
   }
 
   .eyebrow {
@@ -114,16 +118,6 @@
     margin-bottom: 24px;
   }
 
-  .agent-frame {
-    width: 100%;
-    max-width: 420px;
-    height: 700px;
-    max-height: 70vh;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    background: #fff;
-  }
-
   .tags {
     display: flex;
     gap: 8px;
@@ -139,33 +133,17 @@
     border-radius: 999px;
     padding: 6px 14px;
   }
-
-  footer {
-    width: 100%;
-    max-width: 960px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--fg-dim);
-    padding-top: 24px;
-    border-top: 1px solid var(--line);
-  }
-
-  footer a {
-    color: var(--fg-dim);
-    text-decoration: none;
-  }
-
-  footer a:hover { color: var(--fg); }
-
 </style>
 </head>
 <body>
 
   <header>
     <div class="brand"><span class="dot"></span> Built on ElevenLabs Agents</div>
-    <a href="mailto:j.holliss@live.co.uk">j.holliss@live.co.uk</a>
+    <div class="contact">
+      <span>James Holliss · Solutions Engineer</span>
+      <a href="mailto:j.holliss@live.co.uk">j.holliss@live.co.uk</a>
+      <a href="https://linkedin.com/in/jamesholliss" target="_blank" rel="noopener">linkedin.com/in/jamesholliss</a>
+    </div>
   </header>
 
   <main>
@@ -177,28 +155,26 @@
       join ElevenLabs.
     </p>
 
-    <p class="widget-caption">Voice or text · takes about 30 seconds to load</p>
-
-    <iframe
-      class="agent-frame"
-      src="https://elevenlabs.io/app/talk-to?agent_id=agent_1901kxnyny0debmv2emrrh3d994k"
-      title="Talk to James Holliss's AI agent"
-      allow="microphone; autoplay"
-      loading="eager"
-    ></iframe>
-
     <div class="tags">
       <span class="tag">Agentic AI</span>
       <span class="tag">MCP orchestration</span>
       <span class="tag">Enterprise integration</span>
       <span class="tag">Regulated environments</span>
     </div>
+
+    <p class="widget-caption">↓ Voice or text · takes about 30 seconds to load</p>
+
+    <elevenlabs-convai
+      agent-id="agent_1901kxnyny0debmv2emrrh3d994k"
+      variant="full"
+      placement="bottom"
+      always-expanded="true"
+      action-text="Talk to James's AI agent"
+      start-call-text="Start conversation"
+      end-call-text="End conversation"
+    ></elevenlabs-convai>
   </main>
 
-  <footer>
-    <span>James Holliss · Solutions Engineer</span>
-    <a href="https://linkedin.com/in/jamesholliss" target="_blank" rel="noopener">linkedin.com/in/jamesholliss</a>
-  </footer>
-
+  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 </body>
 </html>
