@@ -163,7 +163,6 @@
     border-radius: 50%;
     background: radial-gradient(circle at 35% 30%, var(--accent) 0%, rgba(232, 230, 223, 0.35) 45%, rgba(232, 230, 223, 0.05) 75%);
     box-shadow: 0 0 40px 0 rgba(232, 230, 223, 0.15);
-    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, opacity 0.3s ease;
     animation: breathe 4s ease-in-out infinite;
   }
 
@@ -181,8 +180,10 @@
     50% { opacity: 1; }
   }
 
-  .orb-button[data-mode="speaking"] .orb {
-    box-shadow: 0 0 70px 10px rgba(232, 230, 223, 0.35);
+  /* While connected, JS drives transform/box-shadow directly from live
+     audio volume each frame, so the CSS keyframe animation is turned off. */
+  .orb-button[data-status="connected"] .orb {
+    animation: none;
   }
 
   .orb-icon {
@@ -197,14 +198,23 @@
 
   .orb-icon svg { width: 32px; height: 32px; }
 
-  .orb-icon .stop-icon { color: var(--danger); }
-
   .orb-caption {
+    appearance: none;
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.04em;
     color: var(--danger);
-    min-height: 16px;
+    background: none;
+    border: 1px solid var(--danger);
+    border-radius: 999px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .orb-caption:hover {
+    background: var(--danger);
+    color: var(--bg);
   }
 
   .status-text {
@@ -340,13 +350,12 @@
 
     <div class="orb-wrap">
       <button class="orb-button" id="orbButton" data-status="disconnected" aria-label="Start conversation">
-        <span class="orb"></span>
+        <span class="orb" id="orbEl"></span>
         <span class="orb-icon" id="orbIcon">
           <svg id="iconMic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          <svg id="iconStop" class="stop-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
         </span>
       </button>
-      <div class="orb-caption" id="orbCaption"></div>
+      <button type="button" class="orb-caption" id="orbCaption" aria-label="End call" style="display:none">End call</button>
       <div class="status-text" id="statusText">Tap the orb, or type below, to start a conversation</div>
 
       <div class="transcript" id="transcript"></div>
@@ -366,8 +375,7 @@
       const AGENT_ID = "agent_1901kxnyny0debmv2emrrh3d994k";
 
       const orbButton = document.getElementById("orbButton");
-      const iconMic = document.getElementById("iconMic");
-      const iconStop = document.getElementById("iconStop");
+      const orbEl = document.getElementById("orbEl");
       const statusText = document.getElementById("statusText");
       const orbCaption = document.getElementById("orbCaption");
       const transcript = document.getElementById("transcript");
@@ -377,6 +385,7 @@
 
       let conversation = null;
       let pendingMessage = null;
+      let audioLoopId = null;
 
       function setStatus(status) {
         orbButton.dataset.status = status;
@@ -394,10 +403,43 @@
         statusText.textContent = text;
       }
 
-      function showStopIcon(show) {
-        iconMic.style.display = show ? "none" : "block";
-        iconStop.style.display = show ? "block" : "none";
-        orbCaption.textContent = show ? "End call" : "";
+      function setEndCallVisible(show) {
+        orbCaption.style.display = show ? "inline-block" : "none";
+      }
+
+      // Reads live mic/agent volume from the SDK each frame and maps it onto
+      // the orb's scale and glow, so it visibly reacts to whoever is talking.
+      function animateOrb() {
+        if (!conversation || orbButton.dataset.status !== "connected") {
+          orbEl.style.transform = "";
+          orbEl.style.boxShadow = "";
+          audioLoopId = null;
+          return;
+        }
+
+        const mode = orbButton.dataset.mode;
+        let volume = 0;
+        try {
+          volume = mode === "speaking" ? conversation.getOutputVolume() : conversation.getInputVolume();
+        } catch (err) {
+          volume = 0;
+        }
+        volume = Math.max(0, Math.min(1, volume || 0));
+
+        const scale = 1 + volume * 0.3;
+        const glowSize = 40 + volume * 90;
+        const glowAlpha = (0.15 + volume * 0.35).toFixed(2);
+
+        orbEl.style.transform = "scale(" + scale.toFixed(3) + ")";
+        orbEl.style.boxShadow = "0 0 " + glowSize.toFixed(0) + "px 0 rgba(232, 230, 223, " + glowAlpha + ")";
+
+        audioLoopId = requestAnimationFrame(animateOrb);
+      }
+
+      function startAudioLoop() {
+        if (audioLoopId === null) {
+          audioLoopId = requestAnimationFrame(animateOrb);
+        }
       }
 
       function addTranscriptLine(role, text) {
@@ -412,7 +454,7 @@
         if (conversation) return conversation;
 
         setStatus("connecting");
-        showStopIcon(true);
+        setEndCallVisible(true);
         setStatusText("Connecting…");
         composerSend.disabled = true;
 
@@ -420,7 +462,7 @@
           await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (err) {
           setStatus("disconnected");
-          showStopIcon(false);
+          setEndCallVisible(false);
           setStatusText("Microphone access denied — you can still type below");
           composerSend.disabled = false;
           return null;
@@ -433,6 +475,7 @@
               setStatus("connected");
               setStatusText("Listening — talk, or type below");
               composerSend.disabled = false;
+              startAudioLoop();
               if (pendingMessage) {
                 conversation.sendUserMessage(pendingMessage);
                 pendingMessage = null;
@@ -442,7 +485,7 @@
               conversation = null;
               setStatus("disconnected");
               setMode(null);
-              showStopIcon(false);
+              setEndCallVisible(false);
               setStatusText("Conversation ended — tap the orb to start again");
               composerSend.disabled = false;
             },
@@ -463,7 +506,7 @@
           });
         } catch (err) {
           setStatus("disconnected");
-          showStopIcon(false);
+          setEndCallVisible(false);
           setStatusText("Couldn't connect — please try again");
           composerSend.disabled = false;
         }
@@ -478,12 +521,13 @@
       }
 
       orbButton.addEventListener("click", function () {
-        const status = orbButton.dataset.status;
-        if (status === "connected" || status === "connecting") {
-          endConversation();
-        } else {
+        if (orbButton.dataset.status === "disconnected") {
           startConversation();
         }
+      });
+
+      orbCaption.addEventListener("click", function () {
+        endConversation();
       });
 
       composerForm.addEventListener("submit", async function (e) {
