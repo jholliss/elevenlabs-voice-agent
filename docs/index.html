@@ -39,8 +39,7 @@
     width: 100%;
     max-width: 960px;
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    justify-content: flex-end;
     font-size: 13px;
     color: var(--fg-dim);
     letter-spacing: 0.02em;
@@ -51,12 +50,14 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
+    text-align: right;
   }
 
   header .brand {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 4px;
   }
 
   header .brand .dot {
@@ -65,6 +66,7 @@
     border-radius: 50%;
     background: var(--accent);
     display: inline-block;
+    flex-shrink: 0;
   }
 
   header a {
@@ -77,6 +79,12 @@
   header a:hover {
     color: var(--fg);
     border-color: var(--fg-dim);
+  }
+
+  @media (max-width: 600px) {
+    header {
+      font-size: 11px;
+    }
   }
 
   main {
@@ -129,6 +137,30 @@
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 14px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 600px) {
+    .tags {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-left: -24px;
+      margin-right: -24px;
+      padding: 0 24px 4px;
+      mask-image: linear-gradient(to right, transparent, black 24px, black calc(100% - 24px), transparent);
+    }
+
+    .tags::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 5px 12px;
+    }
   }
 
   /* Orb */
@@ -325,8 +357,8 @@
 <body>
 
   <header>
-    <div class="brand"><span class="dot"></span> Built on ElevenLabs Agents</div>
     <div class="contact">
+      <div class="brand"><span class="dot"></span> Built on ElevenLabs Agents</div>
       <span>James Holliss · Solutions Engineer</span>
       <a href="mailto:j.holliss@live.co.uk">j.holliss@live.co.uk</a>
       <a href="https://linkedin.com/in/jamesholliss" target="_blank" rel="noopener">linkedin.com/in/jamesholliss</a>
