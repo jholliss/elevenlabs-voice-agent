@@ -77,10 +77,9 @@ talk-to-james/index.html
    agent can actually book a follow-up call during the conversation — a
    direct demonstration of the MCP orchestration work James already does
    professionally.
-4. **Deploy beyond localhost.** Static host recommended (Vercel, Netlify,
-   or GitHub Pages) — drag-and-drop the `talk-to-james/` folder, no
-   server code required. Remember to add the live domain to the agent's
-   Allowlist once deployed.
+4. **Deploy beyond localhost.** Deploying via **GitHub Pages** — no
+   server code required. Remember to add the live GitHub Pages domain
+   (e.g. `<username>.github.io`) to the agent's Allowlist once deployed.
 5. **Polish pass on the page** — confirm copy/tags, consider adding a
    short "about this demo" line noting it's a personal project (not an
    official ElevenLabs page), and check mobile responsiveness.
