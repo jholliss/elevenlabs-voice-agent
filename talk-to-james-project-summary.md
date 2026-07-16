@@ -5,7 +5,7 @@ demo for an ElevenLabs Solutions Engineer application. The agent talks
 about James Holliss's background; the page is styled to match ElevenLabs'
 own dark, minimal aesthetic.
 
-**Live agent ID:** `agent_01jz0scy5mfstt0azd5vtsy4gg`
+**Live agent ID:** `agent_1901kxnyny0debmv2emrrh3d994k` (agent name: "agent-james")
 (create/manage at https://elevenlabs.io/app/agents)
 
 ---
