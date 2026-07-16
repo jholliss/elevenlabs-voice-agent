@@ -218,21 +218,26 @@
 
   .orb-caption {
     appearance: none;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    color: var(--danger);
-    background: none;
-    border: 1px solid var(--danger);
-    border-radius: 999px;
-    padding: 6px 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: none;
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.15s ease;
   }
 
   .orb-caption:hover {
-    background: var(--danger);
-    color: var(--bg);
+    background: #c73237;
+    transform: scale(1.06);
+  }
+
+  .orb-caption svg {
+    width: 24px;
+    height: 24px;
   }
 
   .status-text {
@@ -366,10 +371,12 @@
       <button class="orb-button" id="orbButton" data-status="disconnected" aria-label="Start conversation">
         <span class="orb" id="orbEl"></span>
         <span class="orb-icon" id="orbIcon">
-          <svg id="iconMic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <svg viewBox="0 0 24 24" fill="#22c55e"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
         </span>
       </button>
-      <button type="button" class="orb-caption" id="orbCaption" aria-label="End call" style="display:none">End call</button>
+      <button type="button" class="orb-caption" id="orbCaption" aria-label="End call" style="display:none">
+        <svg viewBox="0 0 24 24" fill="white" style="transform:rotate(135deg)"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      </button>
       <div class="status-text" id="statusText">Tap the orb, or type below, to start a conversation</div>
 
       <div class="transcript" id="transcript"></div>
@@ -418,7 +425,7 @@
       }
 
       function setEndCallVisible(show) {
-        orbCaption.style.display = show ? "inline-block" : "none";
+        orbCaption.style.display = show ? "flex" : "none";
       }
 
       // Reads live mic/agent volume from the SDK each frame and maps it onto
