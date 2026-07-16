@@ -14,6 +14,7 @@
     --fg-dim: #8a8a86;
     --line: #232321;
     --accent: #e8e6df;
+    --panel: #141413;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -85,13 +86,15 @@
   }
 
   main {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
-    max-width: 640px;
+    max-width: 560px;
     width: 100%;
-    padding: 40px 0 0;
+    padding: 40px 0;
   }
 
   .eyebrow {
@@ -115,7 +118,7 @@
     line-height: 1.6;
     color: var(--fg-dim);
     max-width: 480px;
-    margin-bottom: 44px;
+    margin-bottom: 48px;
   }
 
   .tags {
@@ -130,6 +133,176 @@
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px 14px;
+  }
+
+  /* Orb */
+  .orb-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .orb-button {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    position: relative;
+    width: 168px;
+    height: 168px;
+  }
+
+  .orb-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+
+  .orb {
+    display: block;
+    width: 168px;
+    height: 168px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--accent) 0%, rgba(232, 230, 223, 0.35) 45%, rgba(232, 230, 223, 0.05) 75%);
+    box-shadow: 0 0 40px 0 rgba(232, 230, 223, 0.15);
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, opacity 0.3s ease;
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  .orb-button[data-status="connecting"] .orb {
+    animation: pulse-fast 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse-fast {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .orb-button[data-mode="speaking"] .orb {
+    box-shadow: 0 0 70px 10px rgba(232, 230, 223, 0.35);
+  }
+
+  .orb-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg);
+    pointer-events: none;
+  }
+
+  .orb-icon svg { width: 32px; height: 32px; }
+
+  .status-text {
+    font-size: 13px;
+    color: var(--fg-dim);
+    letter-spacing: 0.02em;
+    min-height: 18px;
+  }
+
+  .composer {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 6px 6px 6px 16px;
+  }
+
+  .composer input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--fg);
+    font-size: 14px;
+    font-family: inherit;
+    padding: 10px 0;
+  }
+
+  .composer input::placeholder { color: var(--fg-dim); }
+
+  .composer button {
+    appearance: none;
+    border: none;
+    background: var(--accent);
+    color: var(--bg);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .composer button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .composer button svg { width: 14px; height: 14px; }
+
+  .end-link {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--fg-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .end-link:hover { color: var(--fg); }
+
+  .transcript {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .transcript:empty { display: none; }
+
+  .transcript .line {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-width: 88%;
+  }
+
+  .transcript .line.user {
+    align-self: flex-end;
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .transcript .line.agent {
+    align-self: flex-start;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--fg);
   }
 </style>
 </head>
@@ -161,17 +334,165 @@
       join ElevenLabs.
     </p>
 
-    <elevenlabs-convai
-      agent-id="agent_1901kxnyny0debmv2emrrh3d994k"
-      variant="full"
-      placement="bottom"
-      always-expanded="true"
-      action-text="Talk to James's AI agent"
-      start-call-text="Start conversation"
-      end-call-text="End conversation"
-    ></elevenlabs-convai>
+    <div class="orb-wrap">
+      <button class="orb-button" id="orbButton" data-status="disconnected" aria-label="Start conversation">
+        <span class="orb"></span>
+        <span class="orb-icon" id="orbIcon">
+          <svg id="iconMic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          <svg id="iconStop" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        </span>
+      </button>
+      <div class="status-text" id="statusText">Tap the orb, or type below, to start a conversation</div>
+
+      <div class="transcript" id="transcript"></div>
+
+      <form class="composer" id="composerForm">
+        <input type="text" id="composerInput" placeholder="Send a message…" autocomplete="off" />
+        <button type="submit" id="composerSend" aria-label="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        </button>
+      </form>
+    </div>
   </main>
 
-  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+  <script src="https://unpkg.com/@elevenlabs/client@1.15.0/dist/lib.iife.js"></script>
+  <script>
+    (function () {
+      const AGENT_ID = "agent_1901kxnyny0debmv2emrrh3d994k";
+
+      const orbButton = document.getElementById("orbButton");
+      const iconMic = document.getElementById("iconMic");
+      const iconStop = document.getElementById("iconStop");
+      const statusText = document.getElementById("statusText");
+      const transcript = document.getElementById("transcript");
+      const composerForm = document.getElementById("composerForm");
+      const composerInput = document.getElementById("composerInput");
+      const composerSend = document.getElementById("composerSend");
+
+      let conversation = null;
+      let pendingMessage = null;
+
+      function setStatus(status) {
+        orbButton.dataset.status = status;
+      }
+
+      function setMode(mode) {
+        if (mode) {
+          orbButton.dataset.mode = mode;
+        } else {
+          delete orbButton.dataset.mode;
+        }
+      }
+
+      function setStatusText(text) {
+        statusText.textContent = text;
+      }
+
+      function showStopIcon(show) {
+        iconMic.style.display = show ? "none" : "block";
+        iconStop.style.display = show ? "block" : "none";
+      }
+
+      function addTranscriptLine(role, text) {
+        const line = document.createElement("div");
+        line.className = "line " + (role === "user" ? "user" : "agent");
+        line.textContent = text;
+        transcript.appendChild(line);
+        transcript.scrollTop = transcript.scrollHeight;
+      }
+
+      async function startConversation() {
+        if (conversation) return conversation;
+
+        setStatus("connecting");
+        showStopIcon(true);
+        setStatusText("Connecting…");
+        composerSend.disabled = true;
+
+        try {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (err) {
+          setStatus("disconnected");
+          showStopIcon(false);
+          setStatusText("Microphone access denied — you can still type below");
+          composerSend.disabled = false;
+          return null;
+        }
+
+        try {
+          conversation = await ElevenLabsClient.Conversation.startSession({
+            agentId: AGENT_ID,
+            onConnect: function () {
+              setStatus("connected");
+              setStatusText("Listening — talk, or type below");
+              composerSend.disabled = false;
+              if (pendingMessage) {
+                conversation.sendUserMessage(pendingMessage);
+                pendingMessage = null;
+              }
+            },
+            onDisconnect: function () {
+              conversation = null;
+              setStatus("disconnected");
+              setMode(null);
+              showStopIcon(false);
+              setStatusText("Conversation ended — tap the orb to start again");
+              composerSend.disabled = false;
+            },
+            onError: function (message) {
+              setStatusText("Something went wrong: " + message);
+            },
+            onModeChange: function (props) {
+              setMode(props.mode);
+              if (props.mode === "speaking") {
+                setStatusText("James's agent is speaking…");
+              } else {
+                setStatusText("Listening — talk, or type below");
+              }
+            },
+            onMessage: function (props) {
+              addTranscriptLine(props.role, props.message);
+            },
+          });
+        } catch (err) {
+          setStatus("disconnected");
+          showStopIcon(false);
+          setStatusText("Couldn't connect — please try again");
+          composerSend.disabled = false;
+        }
+
+        return conversation;
+      }
+
+      function endConversation() {
+        if (conversation) {
+          conversation.endSession();
+        }
+      }
+
+      orbButton.addEventListener("click", function () {
+        const status = orbButton.dataset.status;
+        if (status === "connected" || status === "connecting") {
+          endConversation();
+        } else {
+          startConversation();
+        }
+      });
+
+      composerForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const text = composerInput.value.trim();
+        if (!text) return;
+        composerInput.value = "";
+
+        if (conversation) {
+          conversation.sendUserMessage(text);
+        } else {
+          pendingMessage = text;
+          await startConversation();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
